@@ -1,6 +1,10 @@
-﻿fastapi[standard]
+fastapi
 uvicorn
-requests
 python-dotenv
-
-
+oracledb
+requests
+pydantic
+loguru
+redis
+pytest
+pydantic-settings

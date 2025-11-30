@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-matrix:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install ruff mypy coverage pytest-cov
+
+      - name: Lint (ruff)
+        run: |
+          ruff check backend
+
+      - name: Type check (mypy)
+        run: |
+          mypy backend || true
+
+      - name: Run tests with coverage
+        working-directory: backend
+        run: |
+          python -m pytest tests -q --cov=app --cov-report=xml:coverage.xml
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: backend/coverage.xml
+
+      - name: Show coverage summary
+        working-directory: backend
+        run: |
+          coverage report -m || true
+
+  lint-only:
+    name: Lint only
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install ruff
+        run: python -m pip install --upgrade pip && pip install ruff
+      - name: Run ruff
+        run: ruff check backend

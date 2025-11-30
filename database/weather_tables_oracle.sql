@@ -4,7 +4,11 @@ CREATE TABLE weather_user.weather_api_response (
   location VARCHAR2(200),
   api_type VARCHAR2(50),
   request_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  json_data CLOB
+  json_data CLOB,
+  params_json CLOB,
+  response_time_ms NUMBER,
+  status_code NUMBER,
+  request_url VARCHAR2(400)
 );
 
 
