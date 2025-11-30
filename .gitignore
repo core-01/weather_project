@@ -1,0 +1,23 @@
+﻿# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+backend/.venv
+
+# Node
+node_modules/
+frontend/web/node_modules/
+dist/
+build/
+
+# OS
+.DS_Store
+
+# env
+.env
+.env.local
+
+# logs
+logs/
+*.log
